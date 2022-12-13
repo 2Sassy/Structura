@@ -35,7 +35,7 @@ class process_structure:
         for block_id in self.blocks:
             if self.palette[block_id]["name"] not in ignored_blocks:
                 block_name = self.palette[block_id]["name"]
-                if block_name in block_counter.keys():
+                if block_name in block_counter:
                     block_counter[block_name] += 1
                 else:
                     block_counter[block_name] = 1

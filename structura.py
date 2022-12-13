@@ -65,21 +65,21 @@ makeMaterialsList : sets wether a material list shall be output.
     
     visual_name=pack_name
     if len("".join(list(models_object.keys())))>1:
-        fileName="{} Nametags.txt".format(pack_name)
+        fileName = f"{pack_name} Nametags.txt"
         with open(fileName,"w+") as text_file:
             text_file.write("These are the nametags used in this file\n")
             for name in models_object.keys():
                 
-                text_file.write("{}\n".format(name))
-        
-    
+                text_file.write(f"{name}\n")
+                        
+
     ## makes a render controller class that we will use to hide models
     rc=rcc.render_controller()
     ##makes a armor stand entity class that we will use to add models 
     armorstand_entity = armor_stand_class.armorstand()
     ##manifest is mostly hard coded in this function.
     manifest.export(visual_name)
-    
+
     ## repeate for each structure after you get it to work
     #creats a base animation controller for us to put pose changes into
     animation = animation_class.animations()
@@ -89,14 +89,17 @@ makeMaterialsList : sets wether a material list shall be output.
         offset=models_object[model_name]["offsets"]
         rc.add_model(model_name)
         armorstand_entity.add_model(model_name)
-        copyfile(models_object[model_name]["structure"], "{}/{}.mcstructure".format(pack_name,model_name))
+        copyfile(
+            models_object[model_name]["structure"],
+            f"{pack_name}/{model_name}.mcstructure",
+        )
         if debug:
             print(models_object[model_name]['offsets'])
         #reads structure
         struct2make = structure_reader.process_structure(models_object[model_name]["structure"])
         #creates a base armorstand class for us to insert blocks
         armorstand = asgc.armorstandgeo(model_name,alpha = models_object[model_name]['opacity'],offsets=models_object[model_name]['offsets'])
-        
+
         #gets the shape for looping
         [xlen, ylen, zlen] = struct2make.get_size()
         if ylen > longestY:
@@ -126,48 +129,50 @@ makeMaterialsList : sets wether a material list shall be output.
                         print(blk_name)
                     ##  If java worlds are brought into bedrock the tools some times
                     ##   output unsupported blocks, will log.
-                    
+
                     if debug:
                         armorstand.make_block(x, y, z, blk_name, rot = rot, top = top,variant = variant, trap_open=open_bit, data=data)
                     try:
                         armorstand.make_block(x, y, z, blk_name, rot = rot, top = top,variant = variant, trap_open=open_bit, data=data)
                     except:
                         print("There is an unsuported block in this world and it was skipped")
-                        print("x:{} Y:{} Z:{}, Block:{}, Variant: {}".format(x,y,z,block["name"],variant))
+                        print(f'x:{x} Y:{y} Z:{z}, Block:{block["name"]}, Variant: {variant}')
         ## this is a quick hack to get block lists, doesnt consider vairants.... so be careful                
         allBlocks = struct2make.get_block_list()
-        fileName="{}-{} block list.txt".format(visual_name,model_name)
+        fileName = f"{visual_name}-{model_name} block list.txt"
         if makeMaterialsList:
             with open(fileName,"w+") as text_file:
                 text_file.write("This is a list of blocks, there is a known issue with variants, all variants are counted together\n")
                 for name in allBlocks.keys():
                     commonName = name.replace("minecraft:","")
-                    text_file.write("{}: {}\n".format(commonName,allBlocks[name]))
-        
+                    text_file.write(f"{commonName}: {allBlocks[name]}\n")
+
         # call export fuctions
         armorstand.export(pack_name)
         animation.export(pack_name)
 
         ##export the armorstand class
         armorstand_entity.export(pack_name)
-        
+
     # Copy my icons in
-    copyfile(icon, "{}/pack_icon.png".format(pack_name))
+    copyfile(icon, f"{pack_name}/pack_icon.png")
     # Adds to zip file a modified armor stand geometry to enlarge the render area of the entity
     larger_render = "lookups/armor_stand.larger_render.geo.json"
-    larger_render_path = "{}/models/entity/{}".format(pack_name, "armor_stand.larger_render.geo.json")
+    larger_render_path = (
+        f"{pack_name}/models/entity/armor_stand.larger_render.geo.json"
+    )
     copyfile(larger_render, larger_render_path)
     # the base render controller is hard coded and just copied in
-        
-        
+
+
     rc.export(pack_name)
     ## get all files
     file_paths = []
     for directory,_,_ in os.walk(pack_name):
         file_paths.extend(glob.glob(os.path.join(directory, "*.*")))
-    
-    ## add all files to the mcpack file  
-    with ZipFile("{}.mcpack".format(pack_name), 'x') as zip: 
+
+    ## add all files to the mcpack file
+    with ZipFile(f"{pack_name}.mcpack", 'x') as zip: 
         # writing each file one by one 
 
         for file in file_paths:
@@ -197,6 +202,7 @@ if __name__=="__main__":
         icon_var.set(filedialog.askopenfilename(filetypes=(
             ("Icon File", "*.png *.PNG"), )))
     def box_checked():
+        r = 0
         if check_var.get()==0:
             modle_name_entry.grid_forget()
             modle_name_lb.grid_forget()
@@ -204,7 +210,6 @@ if __name__=="__main__":
             listbox.grid_forget()
             saveButton.grid_forget()
             modelButton.grid_forget()
-            r = 0
             file_lb.grid(row=r, column=0)
             file_entry.grid(row=r, column=1)
             packButton.grid(row=r, column=2)
@@ -213,7 +218,7 @@ if __name__=="__main__":
             icon_entry.grid(row=r, column=1)
             IconButton.grid(row=r, column=2)
             r += 1
-            
+
             packName_lb.grid(row=r, column=0)
             packName_entry.grid(row=r, column=1)
             r += 1
@@ -223,14 +228,8 @@ if __name__=="__main__":
             z_entry.grid_forget()
             transparency_lb.grid_forget()
             transparency_entry.grid_forget()
-            advanced_check.grid(row=r, column=0)
-            export_check.grid(row=r, column=1)
-            saveButton.grid(row=r, column=2)
-            r +=1
-            updateButton.grid(row=r, column=2)
         else:
             saveButton.grid_forget()
-            r = 0
             file_lb.grid(row=r, column=0)
             file_entry.grid(row=r, column=1)
             packButton.grid(row=r, column=2)
@@ -258,11 +257,11 @@ if __name__=="__main__":
             listbox.grid(row=r,column=1, rowspan=3)
             deleteButton.grid(row=r,column=2)
             r += 4
-            advanced_check.grid(row=r, column=0)
-            export_check.grid(row=r, column=1)
-            saveButton.grid(row=r, column=2)
-            r +=1
-            updateButton.grid(row=r, column=2)
+        advanced_check.grid(row=r, column=0)
+        export_check.grid(row=r, column=1)
+        saveButton.grid(row=r, column=2)
+        r +=1
+        updateButton.grid(row=r, column=2)
     def add_model():
         valid=True
         if len(FileGUI.get()) == 0:
@@ -296,8 +295,8 @@ if __name__=="__main__":
         ##wrapper for a gui.
         global models, offsets
         stop = False
-        
-        
+
+
         if check_var.get()==0:
             if len(FileGUI.get()) == 0:
                 stop = True
@@ -305,25 +304,25 @@ if __name__=="__main__":
             if len(packName.get()) == 0:
                 stop = True
                 messagebox.showinfo("Error", "You need a Name")
-        else:
-            if len(list(models.keys()))==0:
-                stop = True
-                messagebox.showinfo("Error", "You need to add some strucutres")
-        if os.path.isfile("{}.mcpack".format(packName.get())):
+        elif not list(models.keys()):
+            stop = True
+            messagebox.showinfo("Error", "You need to add some strucutres")
+        if os.path.isfile(f"{packName.get()}.mcpack"):
             stop = True
             messagebox.showinfo("Error", "pack already exists or pack name is empty")
-        if len(icon_var.get())>0:
-            pack_icon=icon_var.get()
-        else:
-            pack_icon="lookups/pack_icon.png"
         if not stop:
+            pack_icon = (
+                icon_var.get()
+                if len(icon_var.get()) > 0
+                else "lookups/pack_icon.png"
+            )
             if not(check_var.get()):
                 name_tag = ""
                 models[name_tag] = {}
                 models[name_tag]["offsets"] = [xvar.get(),yvar.get(),zvar.get()]
                 models[name_tag]["opacity"] = sliderVar.get()
                 models[name_tag]["structure"] = FileGUI.get()
-                
+
             if debug:
                 print(models)
             generate_pack(packName.get(),

@@ -62,14 +62,15 @@ modName=["SingleItemSorter",
          "ReLiC"]
 models={}
 offsets={}
-ind=0
 for i in range(len(modName)):
     
     models[modName[i]]={}
     print(modName[i])
-    
-    models[modName[i]]["structure"]="test_structures\{}.mcstructure".format(modFile[i])
+
+    models[modName[i]]["structure"] = f"test_structures\{modFile[i]}.mcstructure"
     models[modName[i]]["offsets"]=[8,0,7]
     models[modName[i]]["opacity"] = 0.8
-ind+=1
-structura.generate_pack("{}".format("HattersToyBox"),models_object=models,makeMaterialsList=False)
+ind = 0 + 1
+structura.generate_pack(
+    'HattersToyBox', models_object=models, makeMaterialsList=False
+)
