@@ -19,8 +19,7 @@ def getLatest():
         try:
             os.remove(os.path.join(cwd,"lookups",file))
         except:
-            print("failed to delet:" +file)
-            pass
+            print(f"failed to delet:{file}")
         registry[file]=None
 
 
@@ -33,7 +32,7 @@ def getLatest():
         registry=registry,
         env="PATH_TO_STRUCTURA_LOOKUP",
     )
-    for file in registry.keys():
+    for file in registry:
         test=definitions.fetch(file)
 
 

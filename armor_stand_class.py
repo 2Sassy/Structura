@@ -7,8 +7,7 @@ import os
 
 class armorstand:
     def __init__(self):
-        self.stand = {"format_version": "1.10.0"}
-        self.stand["minecraft:client_entity"] = {}
+        self.stand = {"format_version": "1.10.0", "minecraft:client_entity": {}}
         ##sorry about this dump... it is just copied over...
         desc={"identifier": "minecraft:armor_stand",
               "min_engine_version": "1.8.0",
@@ -56,17 +55,17 @@ class armorstand:
         self.geos = {"default": "geometry.armor_stand.larger_render"}
         self.textures =  {"default": "textures/entity/armor_stand"}
     def add_model(self, name):
-        prog_name = "ghost_blocks_{}".format(name.replace(" ","_").lower())
-        self.geos[prog_name] = "geometry.armor_stand.{}".format(prog_name)
-        self.textures[prog_name] = "textures/entity/{}".format(prog_name)
+        prog_name = f'ghost_blocks_{name.replace(" ", "_").lower()}'
+        self.geos[prog_name] = f"geometry.armor_stand.{prog_name}"
+        self.textures[prog_name] = f"textures/entity/{prog_name}"
 
     def export(self, pack_name):
         self.stand["minecraft:client_entity"]["description"]["textures"] = self.textures
         self.stand["minecraft:client_entity"]["description"]["geometry"] = self.geos
 
-        path = "{}/entity/armor_stand.entity.json".format(pack_name)
+        path = f"{pack_name}/entity/armor_stand.entity.json"
         os.makedirs(os.path.dirname(path), exist_ok = True)
-        
+
         with open(path, "w+") as json_file:
             json.dump(self.stand, json_file, indent=2)
     

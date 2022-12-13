@@ -29,7 +29,7 @@ def export(pack_name):
                     0, 0, 1]}]}
 
 
-    path_to_ani = "{}/manifest.json".format(pack_name)
+    path_to_ani = f"{pack_name}/manifest.json"
     os.makedirs(os.path.dirname(path_to_ani), exist_ok=True)
 
     with open(path_to_ani, "w+") as json_file:
